@@ -52,7 +52,7 @@ npm run build # for production
 1. **User Management:**
    - [x] Provide a way to view and manage users.
    - [x] Include options to add, edit, or delete users.
-   - [ ] Enable assigning roles to users and managing their status (e.g., Active/Inactive).
+   - [x] Enable assigning roles to users and managing their status (e.g., Active/Inactive).
 2. - **Role Management:**
    - [ ] Create a way to define and edit roles.
    - [ ] Allow roles to include permissions (e.g., Read, Write, Delete) or custom attributes.
@@ -60,5 +60,5 @@ npm run build # for production
    - [ ] Design a method to assign or modify permissions for roles.
    - [ ] Display permissions clearly for ease of understanding and modification.
 4. **Custom API Simulation (Optional):**
-   - [ ] Mock API calls for CRUD operations on users and roles.
-   - [ ] Simulate server responses to validate functionality.
+   - [x] Mock API calls for CRUD operations on users and roles.
+   - [x] Simulate server responses to validate functionality.

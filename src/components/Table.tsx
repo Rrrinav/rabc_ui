@@ -1,36 +1,44 @@
 import React from "react";
 
-interface TableProps {
-  headers: { label: number; key: string }[];
-  data: any[];
-  renderRow: (item: any) => React.ReactNode;
+interface TableProps<T> {
+  headers: Array<{
+    key_v: string;
+    key: string;
+    sortable?: boolean;
+    renderHeader?: () => React.ReactNode;
+  }>;
+  data: T[];
+  renderRow: (item: T) => React.ReactNode;
   emptyMessage?: string;
 }
 
-const Table: React.FC<TableProps> = ({
+const Table = <T,>({
   headers,
-  data,
+  data = [],
   renderRow,
-  emptyMessage = "No data found.",
-}) => {
+  emptyMessage = "No data available",
+}: TableProps<T>) => {
   return (
-    <div className="overflow-x-auto shadow-xl shadow-gray-800 border border-gray-100">
-      <table className="w-full table-auto text-left border-collapse">
-        <thead>
-          <tr className="bg-primary-bg-2 text-white">
+    <div className="overflow-x-auto bg-sec-bg-1 rounded-lg shadow-md border border-gray-200">
+      <table className="w-full border-collapse">
+        <thead className="bg-primary-bg-2 text-white">
+          <tr>
             {headers.map((header) => (
-              <th key={header.label} className="p-4">
-                {header.key}
+              <th
+                key={header.key}
+                className="p-4 text-left font-semibold border-b border-gray-700"
+              >
+                {header.renderHeader ? header.renderHeader() : header.key_v}
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
           {data.length > 0 ? (
-            data.map((item) => (
+            data.map((item, index) => (
               <tr
-                key={item.id}
-                className="odd:bg-sec-bg-1 even:bg-sec-bg-2 hover:bg-primary-bg-1 transition-all"
+                key={index}
+                className="hover:bg-primary-bg-1 transition-colors duration-200 border-b border-gray-700 last:border-b-0"
               >
                 {renderRow(item)}
               </tr>
@@ -39,7 +47,7 @@ const Table: React.FC<TableProps> = ({
             <tr>
               <td
                 colSpan={headers.length}
-                className="p-4 text-center text-gray-500 font-semibold"
+                className="text-center p-4 text-color-text opacity-70"
               >
                 {emptyMessage}
               </td>
