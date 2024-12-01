@@ -253,8 +253,6 @@ const UserManagement: React.FC = () => {
           u.id === user.id ? { ...u, status: updatedStatus } : u,
         ),
       );
-
-      toast.info(`User status changed to ${updatedStatus}`);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Error updating user status";
@@ -301,7 +299,7 @@ const UserManagement: React.FC = () => {
             <>
               <td className="p-4 w-1/4">{user.name}</td>
               <td className="p-4 w-1/4">{user.email}</td>
-              <td className="p-4 w-1/4">{user.role}</td>
+              <td className="p-4 w-1/4">{user.role.toUpperCase()}</td>
               <td className="p-4 text-center w-1/4">
                 <button
                   className={`flex items-center gap-2 px-3 py-1 rounded-md transition-all ${

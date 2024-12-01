@@ -1,35 +1,31 @@
 {
   "users": [
     {
-      "id": "81e2"
-    },
-    {
       "id": "b690",
       "name": "Rohit",
-      "email": "rohit@sample.com",
-      "role": "Viewer",
+      "email": "rohitmail@sample.com",
+      "role": "admin",
       "status": "active"
     },
     {
       "id": "e454",
       "name": "Jatin",
       "email": "jatin@sample.com",
-      "role": "Viewer",
+      "role": "user",
       "status": "active"
     },
     {
       "id": "9002",
       "name": "Rahul",
       "email": "rahul@sample.com",
-      "role": "Viewer",
+      "role": "user",
       "status": "active"
     },
     {
       "id": "742f",
       "name": "Kartik",
       "email": "kartik@sample.com",
-      "role": "Viewer",
-      "status": "active"
+      "role": "user"
     }
   ],
   "roles": [
@@ -56,6 +52,20 @@
         "read",
         "write"
       ]
+    }
+  ],
+  "permissions": [
+    {
+      "id": "1",
+      "name": "read"
+    },
+    {
+      "id": "2",
+      "name": "write"
+    },
+    {
+      "id": "3",
+      "name": "delete"
     }
   ]
 }

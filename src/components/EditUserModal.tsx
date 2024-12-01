@@ -1,4 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { Role } from "../types/role";
+import { api } from "../apis/api";
+import { API_ROUTES } from "../apis/apiroutes";
+import { toast } from "react-toastify";
 
 interface EditUserModalProps {
   user: any;
@@ -13,12 +17,28 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
   onClose,
   onSave,
 }) => {
+  const [roles, setRoles] = useState<Role[]>([]);
+
   const [formData, setFormData] = useState({
     id: user?.id || "",
     name: user?.name || "",
     email: user?.email || "",
     role: user?.role || "",
   });
+
+  const fetchROles = useCallback(async () => {
+    try {
+      const response = await api.get(API_ROUTES.ROLES);
+      setRoles(response.data);
+    } catch (error) {
+      toast.error("Failed to fetch roles");
+      console.error(error);
+    }
+  }, [roles]);
+
+  useEffect(() => {
+    fetchROles();
+  }, [fetchROles, roles]);
 
   // Sync form data when modal opens with a new user
   useEffect(() => {
@@ -96,9 +116,11 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
               className="bg-sec-bg-2 w-full p-2 border rounded"
               defaultValue={user.role}
             >
-              <option value="user">User</option>
-              <option value="manager">Manager</option>
-              <option value="admin">Admin</option>
+              {roles.map((role) => (
+                <option key={role.id} value={role.name}>
+                  {role.name}
+                </option>
+              ))}
             </select>
           </div>
         </div>

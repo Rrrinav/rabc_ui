@@ -1,4 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import { toast } from "react-toastify";
+import { api } from "../apis/api";
+import { API_ROUTES } from "../apis/apiroutes";
+import { Role } from "../types/role";
 
 interface NewUserModalProps {
   isOpen: boolean;
@@ -17,6 +21,21 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
     role: "Viewer", // Default role
   });
 
+  const [roles, setRoles] = useState<Role[]>([]);
+
+  const fetchROles = useCallback(async () => {
+    try {
+      const response = await api.get(API_ROUTES.ROLES);
+      setRoles(response.data);
+    } catch (error) {
+      toast.error("Failed to fetch roles");
+      console.error(error);
+    }
+  }, [roles]);
+
+  useEffect(() => {
+    fetchROles();
+  }, [fetchROles, roles]);
   useEffect(() => {
     setNewUser({
       name: "",
@@ -88,9 +107,11 @@ const NewUserModal: React.FC<NewUserModalProps> = ({
               defaultValue="user"
               className="bg-sec-bg-2  w-full p-2 border border-gray-300 rounded-md"
             >
-              <option value="user">User</option>
-              <option value="manager">Manager</option>
-              <option value="admin">Admin</option>
+              {roles.map((role) => (
+                <option key={role.id} value={role.name}>
+                  {role.name}
+                </option>
+              ))}
             </select>
           </div>
           <div className="flex justify-between">
