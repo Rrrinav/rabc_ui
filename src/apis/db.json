@@ -2,9 +2,9 @@
   "users": [
     {
       "id": "b690",
-      "name": "Rohit",
-      "email": "rohitmail@sample.com",
-      "role": "admin",
+      "name": "Rohit Sample",
+      "email": "rohit@sample.com",
+      "role": "user",
       "status": "active"
     },
     {
@@ -25,7 +25,55 @@
       "id": "742f",
       "name": "Kartik",
       "email": "kartik@sample.com",
-      "role": "user"
+      "role": "user",
+      "status": "active"
+    },
+    {
+      "id": "03e7",
+      "name": "Muneim",
+      "email": "muneim@sample.com",
+      "role": "user",
+      "status": "inactive"
+    },
+    {
+      "id": "95d9",
+      "name": "John",
+      "email": "John@sample.com",
+      "role": "user",
+      "status": "active"
+    },
+    {
+      "id": "25d3",
+      "name": "Jedi",
+      "email": "jedi@sample.com",
+      "role": "user",
+      "status": "active"
+    },
+    {
+      "id": "cac3",
+      "name": "crazy",
+      "email": "crazy@sample.com",
+      "role": "Viewer",
+      "status": "inactive"
+    },
+    {
+      "id": "2837",
+      "name": "another",
+      "email": "another@sample.com",
+      "role": "Viewer"
+    },
+    {
+      "id": "ac24",
+      "name": "Lavanya",
+      "email": "lavanya@sample.com",
+      "role": "user",
+      "status": "active"
+    },
+    {
+      "id": "7dcc",
+      "name": "Karan",
+      "email": "karan@sample.com",
+      "role": "Viewer"
     }
   ],
   "roles": [

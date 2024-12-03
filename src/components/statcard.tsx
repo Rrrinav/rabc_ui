@@ -11,7 +11,7 @@ interface StatCardProps {
 const StatCard: React.FC<StatCardProps> = ({ icon, title, value, color }) => {
   return (
     <div
-      className={`p-6 rounded-lg shadow-lg flex items-center space-x-4 backdrop-blur-md ${color} bg-opacity-90 border border-sec-bg-2`}
+      className={`p-6 rounded-lg shadow-lg flex items-center space-x-4 backdrop-blur-md ${color} bg-opacity-90 border border-sec-bg-2 overflow-hidden`}
     >
       <IconContext.Provider value={{ size: "28" }}>
         <div className="p-3 rounded-full bg-white bg-opacity-10 ">{icon}</div>

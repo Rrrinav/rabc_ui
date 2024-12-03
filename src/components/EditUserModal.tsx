@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { User } from "../types/user";
 import { Role } from "../types/role";
 import { api } from "../apis/api";
 import { API_ROUTES } from "../apis/apiroutes";
-import { toast } from "react-toastify";
 
 interface EditUserModalProps {
-  user: any;
+  user: User;
   isOpen: boolean;
   onClose: () => void;
   onSave: (updatedUser: any) => void;
 }
+
+const DEFAULT_ROLE = "user";
 
 const EditUserModal: React.FC<EditUserModalProps> = ({
   user,
@@ -23,7 +25,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
     id: user?.id || "",
     name: user?.name || "",
     email: user?.email || "",
-    role: user?.role || "",
+    role: user?.role || DEFAULT_ROLE,
   });
 
   const fetchROles = useCallback(async () => {
@@ -31,7 +33,6 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
       const response = await api.get(API_ROUTES.ROLES);
       setRoles(response.data);
     } catch (error) {
-      toast.error("Failed to fetch roles");
       console.error(error);
     }
   }, [roles]);
@@ -114,7 +115,6 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
               value={formData.role}
               onChange={handleChange}
               className="bg-sec-bg-2 w-full p-2 border rounded"
-              defaultValue={user.role}
             >
               {roles.map((role) => (
                 <option key={role.id} value={role.name}>

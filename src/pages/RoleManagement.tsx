@@ -201,7 +201,7 @@ const RoleManagement: React.FC = () => {
   ];
 
   return (
-    <div className="bg-primary-bg-1 h-screen p-6 space-y-6 bg-gradient-to-b from-primary-bg-1 to-sec-bg-2">
+    <div className="bg-primary-bg-1 min-h-full p-6 space-y-6 bg-gradient-to-b from-primary-bg-1 to-sec-bg-2">
       <header className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-color-text">Role Management</h1>
         <button
@@ -234,7 +234,7 @@ const RoleManagement: React.FC = () => {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center items-center h-full">
+        <div className="flex justify-center items-center min-h-full">
           <div className="spinner">Loading...</div>
         </div>
       ) : (
