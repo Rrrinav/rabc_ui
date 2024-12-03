@@ -3,19 +3,15 @@ import Layout from "./components/Layout";
 import Navbar from "./components/Navbar";
 import { UserProvider } from "./contexts/userContext";
 import { RoleProvider } from "./contexts/roleContext";
+import { AdminAuthProvider } from "./contexts/AdminAuthContext";
+import AdminLogin from "./pages/AdminLogin";
 
 function App() {
   return (
     <div className="flex flex-row gap-0 justify-between">
-      <Layout />
-      <UserProvider>
-        <RoleProvider>
-          <main className="flex-grow overflow-y-scroll">
-            <Navbar />
-            <Outlet />
-          </main>
-        </RoleProvider>
-      </UserProvider>
+      <AdminAuthProvider>
+        <Layout />
+      </AdminAuthProvider>
     </div>
   );
 }

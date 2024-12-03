@@ -1,34 +1,66 @@
 import React from "react";
-import { createBrowserRouter } from "react-router-dom";
-
-import App from "./App";
+import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import UserManagement from "./pages/UserManagement";
 import RoleManagement from "./pages/RoleManagement";
 import Error from "./pages/Error";
+import AdminLogin from "./pages/AdminLogin";
+import App from "./App";
+import { AdminAuthProvider } from "./contexts/AdminAuthContext";
+import { useAdminAuth } from "./contexts/AdminAuthContext";
+
+// Wrapper component for protected routes
+const ProtectedRoute = () => {
+  const { isLoggedIn } = useAdminAuth();
+
+  if (!isLoggedIn) {
+    // Redirect to login if not authenticated
+    return <Navigate to="/login" replace />;
+  }
+
+  return <Outlet />;
+};
 
 const router = createBrowserRouter([
   {
+    path: "/login",
+    element: (
+      <AdminAuthProvider>
+        <AdminLogin />
+      </AdminAuthProvider>
+    ),
+  },
+  {
     path: "/",
-    element: <App />,
+    element: (
+      <AdminAuthProvider>
+        <App />
+      </AdminAuthProvider>
+    ),
+    errorElement: <Error />,
     children: [
       {
-        path: "",
-        element: <Dashboard />, // Landing page for the dashboard
-      },
-      {
-        path: "users",
-        element: <UserManagement />, // User management page
-      },
-      {
-        path: "roles",
-        element: <RoleManagement />, // Role management page
+        element: <ProtectedRoute />,
+        children: [
+          {
+            index: true,
+            element: <Dashboard />,
+          },
+          {
+            path: "users",
+            element: <UserManagement />,
+          },
+          {
+            path: "roles",
+            element: <RoleManagement />,
+          },
+        ],
       },
     ],
   },
   {
     path: "*",
-    element: <Error />, // Catch-all route for undefined paths
+    element: <Error />,
   },
 ]);
 

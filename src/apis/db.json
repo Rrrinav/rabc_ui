@@ -9,10 +9,9 @@
     },
     {
       "id": "e454",
-      "name": "Jatin",
+      "name": "Jatin A",
       "email": "jatin@sample.com",
-      "role": "user",
-      "status": "active"
+      "role": "user"
     },
     {
       "id": "9002",
@@ -43,7 +42,7 @@
     },
     {
       "id": "7dcc",
-      "name": "Karan",
+      "name": "Karan Sample",
       "email": "karan@sample.com",
       "role": "Viewer"
     }
