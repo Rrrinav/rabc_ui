@@ -14,48 +14,60 @@ import { User } from "../types/user";
 import { Role } from "../types/role";
 import NewUserModal from "../components/NewUserModal";
 import Modal from "../components/Modal";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import { Permission } from "../types/permissions";
+import { useUsers } from "../contexts/userContext";
+import { useRoles } from "../contexts/roleContext";
 
 const Dashboard: React.FC = () => {
+  const {
+    users,
+    isUsersLoading,
+    fetchUsers,
+    createUser,
+    updateUser,
+    deleteUser,
+    toggleUserStatus,
+  } = useUsers();
+
+  const {
+    roles,
+    isRolesLoading,
+    fetchRoles,
+    createRole,
+    updateRole,
+    deleteRole,
+  } = useRoles();
   const [currentRole, setCurrentRole] = useState<Role | null>(null);
   const [isNewUserModalOpen, setNewUserModalOpen] = useState<boolean>(false);
   const [roleModalOpen, setRoleModalOpen] = useState<boolean>(false);
   const [totalUsers, setTotalUsers] = useState<number>(0);
   const [activeUsers, setActiveUsers] = useState<number>(0);
   const [totalRoles, setTotalRoles] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
   const [recentActivities, setRecentActivities] = useState<
     { id: number; action: string; details: string; timestamp: string }[]
   >([]);
 
-  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [permissions, setPermissions] = useState<Permission[]>([]);
+
+  useEffect(() => {
+    setTotalUsers(users.length);
+    setTotalRoles(roles.length);
+    const numActiveUsers = users.filter(
+      (user: User) => user.status === "active",
+    ).length;
+    setActiveUsers(numActiveUsers);
+  }, [users, roles]);
 
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // Parallel API calls
-      const [usersResponse, rolesResponse, permissionsResponse] =
-        await Promise.all([
-          api.get(API_ROUTES.USERS),
-          api.get(API_ROUTES.ROLES),
-          api.get(API_ROUTES.PERMISSIONS),
-        ]);
+      const permissionsResponse = await api.get(API_ROUTES.PERMISSIONS);
 
-      // Users
-      setTotalUsers(usersResponse.data.length);
-      const numActiveUsers = usersResponse.data.filter(
-        (user: User) => user.status === "active",
-      ).length;
-      setActiveUsers(numActiveUsers);
-
-      // Roles
-      setTotalRoles(rolesResponse.data.length);
-
-      // Permissions
       setPermissions(permissionsResponse.data);
 
       // Placeholder activities
@@ -111,26 +123,10 @@ const Dashboard: React.FC = () => {
     setNewUserModalOpen(false);
   }, []);
 
-  const handleModalSave = useCallback(
+  const handleModalUserSave = useCallback(
     async (updatedUser: User) => {
-      try {
-        await api.post(API_ROUTES.USERS, updatedUser);
-        handleModalClose();
-
-        // Optimistic updates
-        setTotalUsers((prev) => prev + 1);
-        if (updatedUser.status === "active") {
-          setActiveUsers((prev) => prev + 1);
-        }
-
-        await fetchData();
-        toast.success("User created successfully.");
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Error saving user";
-        toast.error(errorMessage);
-        console.error("Error saving user:", error);
-      }
+      createUser(updatedUser);
+      handleModalClose();
     },
     [handleModalClose, fetchData],
   );
@@ -138,27 +134,9 @@ const Dashboard: React.FC = () => {
   const handleSaveRole = useCallback(async () => {
     if (!currentRole) return;
 
-    try {
-      if (currentRole.id) {
-        // Existing role - update
-        await api.put(API_ROUTES.ROLE(currentRole.id), currentRole);
-        await fetchData();
-        toast.success("Role updated successfully.");
-      } else {
-        // New role - create
-        const { id, ...newRole } = currentRole;
-        await api.post(API_ROUTES.ROLES, newRole);
-        toast.success("Role created successfully.");
-        await fetchData();
-      }
+    await createRole(currentRole);
 
-      handleModalClose();
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Error saving role";
-      toast.error(errorMessage);
-      console.error("Error saving role:", error);
-    }
+    handleModalClose();
   }, [currentRole, handleModalClose, fetchData]);
 
   const togglePermission = useCallback((permission: string) => {
@@ -171,7 +149,7 @@ const Dashboard: React.FC = () => {
     });
   }, []);
 
-  // Loading state
+  //  Loading state
   if (loading) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-primary-bg-1">
@@ -284,7 +262,7 @@ const Dashboard: React.FC = () => {
       <NewUserModal
         isOpen={isNewUserModalOpen}
         onClose={handleModalClose}
-        onSave={handleModalSave}
+        onSave={handleModalUserSave}
       />
 
       {roleModalOpen && (

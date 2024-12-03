@@ -18,15 +18,24 @@ import Table from "../components/Table";
 import Modal from "../components/Modal";
 import { Role } from "../types/role";
 import { Permission } from "../types/permissions";
+import { useRoles } from "../contexts/roleContext";
 
 type SortDirection = "asc" | "desc";
 type SortableKey = keyof Pick<Role, "name">;
 
 const RoleManagement: React.FC = () => {
+  const {
+    roles,
+    isRolesLoading,
+    fetchRoles,
+    createRole,
+    updateRole,
+    deleteRole,
+  } = useRoles();
+
   // State Management
   const [searchTerm, setSearchTerm] = useState("");
-  const [roles, setRoles] = useState<Role[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentRole, setCurrentRole] = useState<Role | null>(null);
 
@@ -51,25 +60,6 @@ const RoleManagement: React.FC = () => {
     fetchPermissions();
   }, [fetchPermissions]);
   // Fetch Roles
-  const fetchRoles = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const response = await api.get(API_ROUTES.ROLES);
-      setRoles(response.data);
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Error fetching roles";
-      toast.error(errorMessage);
-      console.error("Error fetching roles:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  // Initial Roles Fetch
-  useEffect(() => {
-    fetchRoles();
-  }, [fetchRoles]);
 
   // Sorting Function
   const sortRoles = useCallback(
@@ -118,16 +108,8 @@ const RoleManagement: React.FC = () => {
   // Delete Role
   const handleDelete = async (role: Role) => {
     if (window.confirm(`Are you sure you want to delete ${role.name} role?`)) {
-      try {
-        await api.delete(API_ROUTES.ROLE(role.id));
-        toast.warn("Role deleted successfully.");
-        await fetchRoles();
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Error deleting role";
-        toast.error(errorMessage);
-        console.error("Error deleting role:", error);
-      }
+      await deleteRole(role.id);
+      fetchRoles(true);
     }
   };
 
@@ -148,28 +130,16 @@ const RoleManagement: React.FC = () => {
   const handleSaveRole = async () => {
     if (!currentRole) return;
 
-    try {
-      if (currentRole.id) {
-        // Existing role - update
-        await api.put(API_ROUTES.ROLE(currentRole.id), currentRole);
-        toast.success("Role updated successfully.");
-        await fetchRoles();
-      } else {
-        // New role - create
-        const { id, ...newRole } = currentRole;
-        await api.post(API_ROUTES.ROLES, newRole);
-        toast.success("Role created successfully.");
-        await fetchRoles();
-      }
-
-      handleModalClose();
-      await fetchRoles();
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Error saving role";
-      toast.error(errorMessage);
-      console.error("Error saving role:", error);
+    if (currentRole.id) {
+      // Existing role - update
+      await updateRole(currentRole);
+    } else {
+      // New role
+      await createRole(currentRole);
     }
+
+    handleModalClose();
+    await fetchRoles(true);
   };
 
   // Close Modal
@@ -233,7 +203,7 @@ const RoleManagement: React.FC = () => {
         />
       </div>
 
-      {isLoading ? (
+      {isRolesLoading ? (
         <div className="flex justify-center items-center min-h-full">
           <div className="spinner">Loading...</div>
         </div>

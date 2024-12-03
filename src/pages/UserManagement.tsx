@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { User } from "../types/user";
-import { api } from "../apis/api";
-import { API_ROUTES } from "../apis/apiroutes";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
   FaSearch,
@@ -17,6 +15,7 @@ import {
 import Table from "../components/Table";
 import EditUserModal from "../components/EditUserModal";
 import NewUserModal from "../components/NewUserModal";
+import { useUsers } from "../contexts/userContext";
 
 // Constants
 const USER_STATUSES = {
@@ -28,33 +27,24 @@ type SortDirection = "asc" | "desc";
 type SortableKey = keyof Pick<User, "name" | "email" | "role" | "status">;
 
 const UserManagement: React.FC = () => {
+  const {
+    users,
+    isUsersLoading,
+    fetchUsers,
+    createUser,
+    updateUser,
+    deleteUser,
+    toggleUserStatus,
+  } = useUsers();
   // State Management
   const [searchTerm, setSearchTerm] = useState("");
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isNewUserModalOpen, setNewUserModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [users, setUsers] = useState<User[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   // Sorting State
   const [sortColumn, setSortColumn] = useState<SortableKey | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
-
-  // Fetch Users
-  const fetchUsers = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const response = await api.get(API_ROUTES.USERS);
-      setUsers(response.data);
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Error fetching users";
-      toast.error(errorMessage);
-      console.error("Error fetching users:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
 
   // Initial Users Fetch
   useEffect(() => {
@@ -199,16 +189,7 @@ const UserManagement: React.FC = () => {
 
   const handleDelete = async (user: User) => {
     if (window.confirm(`Are you sure you want to delete ${user.name}?`)) {
-      try {
-        await api.delete(API_ROUTES.USER(user.id));
-        toast.warn("User deleted successfully.");
-        setUsers((prev) => prev.filter((u) => u.id !== user.id));
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Error deleting user";
-        toast.error(errorMessage);
-        console.error("Error deleting user:", error);
-      }
+      deleteUser(user.id);
     }
   };
 
@@ -219,47 +200,24 @@ const UserManagement: React.FC = () => {
   };
 
   const handleModalSave = async (updatedUser: User) => {
-    try {
-      if (updatedUser.id) {
-        // User already exists, so update
-        await api.put(API_ROUTES.USER(updatedUser.id), updatedUser);
-        toast.success("User updated successfully.");
-      } else {
-        // New user, so create
-        await api.post(API_ROUTES.USERS, updatedUser);
-        toast.success("User created successfully.");
-      }
-      handleModalClose();
-      await fetchUsers();
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Error saving user";
-      toast.error(errorMessage);
-      console.error("Error saving user:", error);
+    if (updatedUser.id) {
+      // User already exists, so update
+      await updateUser(updatedUser);
+    } else {
+      // New user, so create
+      await createUser(updatedUser);
     }
+    handleModalClose();
+    await fetchUsers();
   };
 
   const handleToggleStatus = async (user: User) => {
-    try {
-      const updatedStatus =
-        user.status === USER_STATUSES.ACTIVE
-          ? USER_STATUSES.INACTIVE
-          : USER_STATUSES.ACTIVE;
-
-      await api.patch(API_ROUTES.USER(user.id), { status: updatedStatus });
-
-      setUsers((prev) =>
-        prev.map((u) =>
-          u.id === user.id ? { ...u, status: updatedStatus } : u,
-        ),
-      );
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Error updating user status";
-      toast.error(errorMessage);
-      console.error("Error updating user status:", error);
-    }
+    await toggleUserStatus(user);
   };
+
+  if (isUsersLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="bg-primary-bg-1 m-h-full p-6 space-y-6 bg-gradient-to-b from-primary-bg-1 to-sec-bg-2">
@@ -287,54 +245,48 @@ const UserManagement: React.FC = () => {
         />
       </div>
 
-      {isLoading ? (
-        <div className="flex justify-center items-center m-h-full">
-          <div className="spinner">Loading...</div>
-        </div>
-      ) : (
-        <Table
-          headers={headerData}
-          data={processedUsers}
-          renderRow={(user) => (
-            <>
-              <td className="p-4 w-1/4">{user.name}</td>
-              <td className="p-4 w-1/4">{user.email}</td>
-              <td className="p-4 w-1/4">{user.role.toUpperCase()}</td>
-              <td className="p-4 text-center w-1/4">
+      <Table
+        headers={headerData}
+        data={processedUsers}
+        renderRow={(user) => (
+          <>
+            <td className="p-4 w-1/4">{user.name}</td>
+            <td className="p-4 w-1/4">{user.email}</td>
+            <td className="p-4 w-1/4">{user.role.toUpperCase()}</td>
+            <td className="p-4 text-center w-1/4">
+              <button
+                className={`flex items-center gap-2 px-3 py-1 rounded-md transition-all ${
+                  user.status === USER_STATUSES.ACTIVE
+                    ? "bg-green-500 hover:bg-green-300 text-white"
+                    : "bg-red-500 hover:bg-red-300 text-white"
+                }`}
+                onClick={() => handleToggleStatus(user)}
+              >
+                <FaRegDotCircle />
+                {user.status === USER_STATUSES.ACTIVE ? "Active" : "Inactive"}
+              </button>
+            </td>
+            <td className="p-4 text-center w-1/4">
+              <div className="flex justify-start gap-4">
                 <button
-                  className={`flex items-center gap-2 px-3 py-1 rounded-md transition-all ${
-                    user.status === USER_STATUSES.ACTIVE
-                      ? "bg-green-500 hover:bg-green-300 text-white"
-                      : "bg-red-500 hover:bg-red-300 text-white"
-                  }`}
-                  onClick={() => handleToggleStatus(user)}
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md transition-all"
+                  title="Edit"
+                  onClick={() => handleEdit(user)}
                 >
-                  <FaRegDotCircle />
-                  {user.status === USER_STATUSES.ACTIVE ? "Active" : "Inactive"}
+                  <FaEdit />
                 </button>
-              </td>
-              <td className="p-4 text-center w-1/4">
-                <div className="flex justify-start gap-4">
-                  <button
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md transition-all"
-                    title="Edit"
-                    onClick={() => handleEdit(user)}
-                  >
-                    <FaEdit />
-                  </button>
-                  <button
-                    className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition-all"
-                    title="Delete"
-                    onClick={() => handleDelete(user)}
-                  >
-                    <FaTrash />
-                  </button>
-                </div>
-              </td>
-            </>
-          )}
-        />
-      )}
+                <button
+                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition-all"
+                  title="Delete"
+                  onClick={() => handleDelete(user)}
+                >
+                  <FaTrash />
+                </button>
+              </div>
+            </td>
+          </>
+        )}
+      />
 
       <EditUserModal
         user={currentUser}

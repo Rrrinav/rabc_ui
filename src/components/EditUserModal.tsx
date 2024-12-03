@@ -5,7 +5,7 @@ import { api } from "../apis/api";
 import { API_ROUTES } from "../apis/apiroutes";
 
 interface EditUserModalProps {
-  user: User;
+  user: User | null;
   isOpen: boolean;
   onClose: () => void;
   onSave: (updatedUser: any) => void;
@@ -58,7 +58,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
       id: user?.id || "",
       name: user?.name || "",
       email: user?.email || "",
-      role: user?.role || "",
+      role: user?.role || DEFAULT_ROLE 
     });
   }, [user, isOpen]);
 

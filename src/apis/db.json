@@ -2,9 +2,9 @@
   "users": [
     {
       "id": "b690",
-      "name": "Rohit Sample",
+      "name": "Rohit ",
       "email": "rohit@sample.com",
-      "role": "user",
+      "role": "manager",
       "status": "active"
     },
     {
@@ -50,13 +50,6 @@
       "status": "active"
     },
     {
-      "id": "cac3",
-      "name": "crazy",
-      "email": "crazy@sample.com",
-      "role": "Viewer",
-      "status": "inactive"
-    },
-    {
       "id": "2837",
       "name": "another",
       "email": "another@sample.com",
@@ -78,15 +71,6 @@
   ],
   "roles": [
     {
-      "id": "1",
-      "name": "admin",
-      "permissions": [
-        "read",
-        "write",
-        "delete"
-      ]
-    },
-    {
       "id": "2",
       "name": "user",
       "permissions": [
@@ -99,6 +83,15 @@
       "permissions": [
         "read",
         "write"
+      ]
+    },
+    {
+      "id": "02f9",
+      "name": "admin",
+      "permissions": [
+        "read",
+        "write",
+        "delete"
       ]
     }
   ],
