@@ -13,6 +13,7 @@ export interface AdminAuthContextType {
   isLoggedIn: boolean;
 }
 
+// With proper backend we can store these or validate on server....
 // Admin Credentials (you should replace this with more secure methods)
 const ADMIN_CREDENTIALS = [{ username: "admin", password: "admin123" }];
 

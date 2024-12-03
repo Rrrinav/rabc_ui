@@ -11,7 +11,7 @@ export default {
         xl: "24px",
       },
       colors: {
-        glass: "rgba(255, 255, 255, 0.1)", // Light translucent color
+        glass: "rgba(255, 255, 255, 0.1)",
         "primary-bg-1": "#06141B",
         "primary-bg-2": "#11212D",
         "sec-bg-1": "#253745",
