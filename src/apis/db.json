@@ -22,27 +22,6 @@
       "status": "active"
     },
     {
-      "id": "742f",
-      "name": "Kartik",
-      "email": "kartik@sample.com",
-      "role": "user",
-      "status": "active"
-    },
-    {
-      "id": "03e7",
-      "name": "Muneim",
-      "email": "muneim@sample.com",
-      "role": "user",
-      "status": "inactive"
-    },
-    {
-      "id": "95d9",
-      "name": "John",
-      "email": "John@sample.com",
-      "role": "user",
-      "status": "active"
-    },
-    {
       "id": "25d3",
       "name": "Jedi",
       "email": "jedi@sample.com",

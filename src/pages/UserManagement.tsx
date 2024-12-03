@@ -220,11 +220,13 @@ const UserManagement: React.FC = () => {
   }
 
   return (
-    <div className="bg-primary-bg-1 m-h-full p-6 space-y-6 bg-gradient-to-b from-primary-bg-1 to-sec-bg-2">
+    <div className="bg-primary-bg-1 min-h-full p-6 space-y-6 bg-gradient-to-b from-primary-bg-1 to-sec-bg-2">
       <header className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-color-text">User Management</h1>
+        <h1 className="text-sm sm:text-md md:text-xl lg:text-2xl  font-bold text-color-text">
+          User Management
+        </h1>
         <button
-          className="flex items-center gap-2 bg-primary-bg-2 hover:bg-sec-bg-2 text-white px-4 py-2 rounded-md transition-all"
+          className="flex items-center gap-2 bg-primary-bg-2 hover:bg-sec-bg-2 text-white px-4 py-2 rounded-md transition-all text-sm sm:text-md md:text-lg lg:text-xl"
           onClick={() => setNewUserModalOpen(true)}
         >
           <FaPlus />

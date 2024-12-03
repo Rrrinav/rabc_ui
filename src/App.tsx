@@ -10,7 +10,7 @@ function App() {
       <Layout />
       <UserProvider>
         <RoleProvider>
-          <main className="flex-grow">
+          <main className="flex-grow overflow-y-scroll">
             <Navbar />
             <Outlet />
           </main>

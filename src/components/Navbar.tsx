@@ -5,7 +5,7 @@ interface NavbarProps {}
 
 const Navbar: React.FC<NavbarProps> = () => {
   return (
-    <div className="bg-primary-bg-1 shadow border-b-2 border-sec-bg-2">
+    <div className=" bg-primary-bg-1 shadow border-b-2 border-sec-bg-2">
       <div className="flex justify-between items-center py-4 px-7">
         {/* Responsive text size for the title */}
         <div className="text-color-text font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl">
